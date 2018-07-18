@@ -1,0 +1,8 @@
+#servers are named gmt-prod-1/2/3
+#ips are 10.10.10.11/12/13 respectively
+
+
+#swarm creation
+docker swarm init --advertise-addr 10.10.10.11 --listen-addr 10.10.10.11
+#swarm join as worker, always use --advertise-addr and --listen-addr
+docker swarm join --token SWMTKN-1-3hpvlpgxl7xtelyck1wdc81sja2tupd4filrfy7s16nv0i5apy-c4etmfda6tj0j9hyj31812v7i 10.10.10.11:2377 --advertise-addr 10.10.10.13 --listen-addr 10.10.10.13

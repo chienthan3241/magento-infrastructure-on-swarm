@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>production</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="changes-for-go-live-in-production">Changes for Go-Live in Production</h1>
+<p>2018-05-18 kg</p>
+<h2 id="user-www-data">User www-data</h2>
+<pre><code>groupadd -g 33 www-data
+useradd -g 33 -u 33 www-data
+</code></pre>
+<p>Add ssh keys to <code>/home/www-data/.ssh/authorized_keys</code>. Make sure to add <code>from=&quot;127.0.0.1,::1</code> to the keys.</p>
+<h2 id="inside-php-containers">Inside php containers</h2>
+<pre><code>composer
+</code></pre>
+<p>home dir <code>/var/www</code> not writable, composer can't store credentials.</p>
+</body>
+</html>

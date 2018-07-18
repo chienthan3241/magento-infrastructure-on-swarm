@@ -1,0 +1,6 @@
+- add password to redis slaves?
+ 
+- passwords into config files using docker sercrets mechanism?
+ 
+- redis euid and redis.conf?
+ 

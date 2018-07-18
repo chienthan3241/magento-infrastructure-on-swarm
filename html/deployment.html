@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>deployment</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="how-to-do-a-deployment-in-staging-or-production">How to do a deployment in staging or production</h1>
+<h2 id="git-pull">git pull</h2>
+<p>On one of the servers, perform the <code>git pull</code> as follows. Today, 2018-06-06, this only works on <code>gmt-stage-1</code>, but we want to create the <code>www-data</code> user on all servers, then it will work on any server.</p>
+<pre><code>ssh xy@gmt-stage-1.devgmt.com       # your user instead of xy
+ssh www-data@localhost              # has to be invoked from there
+cd /data/docker/volumes/magento_appdata/_data
+git pull
+</code></pre>
+<p>Note that this means the <code>git pull</code> happens outside of any container.</p>
+<p>Note that the <code>cd</code> step might fail due to missing permissions. Fix it as follows:</p>
+<pre><code>ssh xy@gmt-stage-1.devgmt.com
+sudo -i
+chmod a+rx /data /data/docker /data/docker/volumes
+</code></pre>
+<p>I think the permissions disappear after a reboot. Not sure how to make them stick.</p>
+<h2 id="empty-the-generated-files">Empty the generated files</h2>
+<p>On each server, empty generated files:</p>
+<pre><code>sudo -i             # become root
+cd /data/docker/volumes/magento_appdata/_data
+bin/delete-generated-directories.sh
+</code></pre>
+<p>(Maybe we need to move this step to a later point because the shop can't run without these files.)</p>
+<h2 id="run-the-magento-cli">Run the Magento CLI</h2>
+<p>The Magento CLI has to be executed inside the <code>applicationphp</code> container, but there is a helper script that does this for you. So from any host in the swarm, at the top of this git repo, do:</p>
+<pre><code>bin/run-magento-updates.sh
+</code></pre>
+<p>The above command finds the right Docker container and then executes the Magento CLI inside that container.</p>
+<h2 id="restart-all-caches">Restart all caches</h2>
+<p>I think the next step is to restart all services that are related to caching:</p>
+<pre><code>bin/restart-caches.sh
+</code></pre>
+<h2 id="potential-other-steps-that-i-hope-are-not-needed">Potential other steps that I hope are not needed</h2>
+<p>Do we need to manually invoke the rsyncer? I hope not. Maybe you can <code>touch kai_was_here.txt</code> to tickle the rsyncer.</p>
+<p>I think nothing is visible in the browser unless you clear all browsing data. In Safari, go to Preferences / Privacy, then click the Manage Website Data button. Then enter <code>devgmt</code> (for staging) or <code>germantom</code> (for production) into the search field, depending on the URL of the Magento environment. Then select <code>devgmt.com</code> or <code>germantom.com</code> from the list and click &quot;Remove&quot;. Close the preferences window.</p>
+<p>TODO: What about the <code>js-translation.json</code> file? Need to address this!</p>
+</body>
+</html>

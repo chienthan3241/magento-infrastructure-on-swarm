@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>tools</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="useful-tools">Useful Tools</h1>
+<p>This page documents the tools included in this repo. All the tools are in the <code>bin/</code> subdirectory. Many tools assume that you are running from the root directory of this git repo, so the tools assume that you call them as <code>bin/foo.sh</code>.</p>
+<p>Most of the tools expect to be run on a node that's part of the swarm. Exceptions will be noted.</p>
+<h2 id="after-reboot-prodsh">after-reboot-prod.sh</h2>
+<p>Performs the necessary steps after rebooting a production node. Must be run as root.</p>
+<h2 id="after-restoresh">after-restore.sh</h2>
+<p>Sets the base URL of the Magento installation. You need this when you take a production DB dump (say) and restore it in staging (say).</p>
+<h2 id="cronsh">cron.sh</h2>
+<p>Runs a shell in the <code>applicationcron</code> container. The shell will be run as user <code>www-data</code>; unless you pass <code>-r</code>, then it will run as <code>root</code>.</p>
+<h2 id="dbdumpsh">dbdump.sh</h2>
+<p>Dump the database and put it into the file <code>prod.sql</code> in the current directory. Often, you would copy this file to another place afterwards. Also see <code>dbrestore.sh</code>.</p>
+<h2 id="dbrestoresh">dbrestore.sh</h2>
+<p>Restore the database from the file <code>prod.sql</code> in the current directory.</p>
+<h2 id="deploy-stacksh">deploy-stack.sh</h2>
+<p>This is a wrapper around <code>docker stack deploy</code>, but our setup requires an environment variable to be specified, so it makes sense to extract that into a shell script.</p>
+<h2 id="find-servicesh">find-service.sh</h2>
+<p>Find the nodes that run a given service. You are not supposed to include the <code>magento_</code> prefix. Example:</p>
+<pre><code>bin/find-service.sh applicationcron
+</code></pre>
+<h2 id="generate-documentationsh">generate-documentation.sh</h2>
+<p>This creates the <code>html</code> directory and then populates it with an HTML version of each of the Markdown files.</p>
+<p>You would normally call this on your Mac. Uses <code>pandoc</code> to do the conversion. Use <code>brew install pandoc</code> to install that tool. (See <a href="https://brew.sh" class="uri">https://brew.sh</a> for more information about Homebrew.)</p>
+<h2 id="magentosh">magento.sh</h2>
+<p>Runs a shell in an <code>applicationphp</code> container. The shell runs as user <code>www-data</code>; unless you pass <code>-r</code>, then it runs as user <code>root</code>.</p>
+<h2 id="rebalance-all-servicessh">rebalance-all-services.sh</h2>
+<p>Runs <code>docker service update --force</code> on each running service. This is useful because replicated services might not be distributed evenly amongst the nodes. For example, when you reboot a node, no services will be running on it initially.</p>
+<h2 id="restart-cachessh">restart-caches.sh</h2>
+<p>Restarts all the caches we've got:</p>
+<ul>
+<li>Full page varnish cache</li>
+<li>Redis cache (what's cached in Redis?)</li>
+</ul>
+<h2 id="run-magento-updatessh">run-magento-updates.sh</h2>
+<p>Run all the upgrade steps that need to run, after a Magento &quot;upgrade&quot;. Actually, this would also be useful after restoring a database.</p>
+<p>Specifically, it runs:</p>
+<ul>
+<li><code>bin/magento setup:upgrade</code></li>
+<li><code>bin/magento setup:di:compile</code></li>
+<li><code>bin/magento setup:static-content:deploy de_DE en_US</code></li>
+<li>Copy the <code>js-translation.json</code> file to the right place</li>
+</ul>
+</body>
+</html>

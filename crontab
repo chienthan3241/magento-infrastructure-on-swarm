@@ -1,0 +1,22 @@
+#these are the usual magento cron jobs
+*/1 * * * * . /usr/local/etc/cronenv.sh; /usr/local/bin/php /var/www/html/update/cron.php
+*/1 * * * * . /usr/local/etc/cronenv.sh; /usr/local/bin/php /var/www/html/bin/magento-php cron:run
+*/1 * * * * . /usr/local/etc/cronenv.sh; /usr/local/bin/php /var/www/html/bin/magento-php setup:cron:run
+
+# AiO products import
+*/30 * * * * . /usr/local/etc/cronenv.sh; /usr/local/bin/php /var/www/aio2/products_import.php
+
+#below are the aio connector cron jobs
+#*/5 * * * * su -c ". /usr/local/etc/cronenv.sh; /usr/local/bin/php /var/www/aio2/orders.php" -s /bin/sh www-data > /proc/1/fd/2 2>&1
+#0 * * * * su -c ". /usr/local/etc/cronenv.sh; /usr/local/bin/php /var/www/aio2/products.php" -s /bin/sh www-data > /proc/1/fd/2 2>&1
+# BE CAREFUL: "Stockitem" will sync stock levels from OpenERP to Magento
+# Thus, if stock levels in OpenERP are not set (f.e. by primary inventory),
+# the stockitem.php job will EMPTY stock of all products in Magento!
+#30 * * * * su -c ". /usr/local/etc/cronenv.sh; /usr/local/bin/php /var/www/aio2/stockitem.php" -s /bin/sh www-data > /proc/1/fd/2 2>&1
+#
+# For more granular control of cron jobs you can split jobs more dedicated:
+#*/5 * * * * * su -c ". /usr/local/etc/cronenv.sh; /usr/local/bin/php /var/www/aio2/orderstatus.php" -s /bin/sh www-data > /proc/1/fd/2 2>&1
+#*/5 * * * * * su -c ". /usr/local/etc/cronenv.sh; /usr/local/bin/php /var/www/aio2/shipment.php" -s /bin/sh www-data > /proc/1/fd/2 2>&1
+#* * * * * su -c ". /usr/local/etc/cronenv.sh; /usr/local/bin/php /var/www/aio2/products_export.php" -s /bin/sh www-data > /proc/1/fd/2 2>&1
+#* * * * * su -c ". /usr/local/etc/cronenv.sh; /usr/local/bin/php /var/www/aio2/products_import.php" -s /bin/sh www-data > /proc/1/fd/2 2>&1
+
