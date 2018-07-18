@@ -1,5 +1,4 @@
 ############### SCALEABLE MAGENTO INFRASTRUCTURE ###################
- author: s.hueltenschmidt@kernel-consulting.de<br>
  created: 2018-04-10<br>
  runs on docker swarm mode 17.12+<br>
  needs at least 3 nodes, stick to odd numbers of nodes for quorum decisions<br>
